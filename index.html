@@ -529,6 +529,90 @@
       font-weight: 500;
     }
 
+    /* SHARE SECTION */
+    .share-section {
+      margin-top: 18px;
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 14px 16px 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      display: grid;
+      gap: 8px;
+    }
+
+    .share-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .share-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .share-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(248, 250, 252, 0.95);
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
+    }
+
+    .share-btn:hover {
+      background: #eef2ff;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+    }
+
+    .share-btn span.icon {
+      font-size: 1rem;
+    }
+
+    body.dark-mode .share-section {
+      background: #020617;
+      border-color: #020617;
+    }
+
+    body.dark-mode .share-btn {
+      background: #020617;
+      border-color: #1f2937;
+      color: var(--text-main);
+    }
+
+    body.dark-mode .share-btn:hover {
+      background: #020617;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.9);
+    }
+
+    .copy-notice {
+      font-size: 0.78rem;
+      margin-top: 4px;
+      color: var(--text-muted);
+      min-height: 14px;
+    }
+
+    .copy-notice.success {
+      color: #16a34a;
+    }
+
+    .copy-notice.error {
+      color: #dc2626;
+    }
+
     .info-section {
       margin-top: 18px;
       background: var(--card-bg);
@@ -807,6 +891,31 @@
         </section>
       </section>
 
+      <!-- SHARE SECTION -->
+      <section class="share-section">
+        <h2 class="share-title">Share CalorieFlow with friends</h2>
+        <p class="share-text">
+          Help others track their calories too. Share this calculator with your friends, clients, or social media followers.
+        </p>
+        <div class="share-buttons">
+          <button id="shareCopy" type="button" class="share-btn">
+            <span class="icon">📋</span>
+            <span>Copy link</span>
+          </button>
+
+          <a id="shareWhatsApp" href="#" target="_blank" rel="noopener noreferrer" class="share-btn">
+            <span class="icon">🟢</span>
+            <span>Share on WhatsApp</span>
+          </a>
+
+          <a id="shareTwitter" href="#" target="_blank" rel="noopener noreferrer" class="share-btn">
+            <span class="icon">𝕏</span>
+            <span>Share on X / Twitter</span>
+          </a>
+        </div>
+        <div id="copyNotice" class="copy-notice" aria-live="polite"></div>
+      </section>
+
       <!-- INFO SECTION -->
       <section class="info-section">
         <h2 class="info-title">How to use CalorieFlow effectively</h2>
@@ -888,6 +997,11 @@
     const resetButton = document.getElementById("resetButton");
     const themeToggleBtn = document.getElementById("themeToggle");
 
+    const shareCopyBtn = document.getElementById("shareCopy");
+    const shareWhatsAppLink = document.getElementById("shareWhatsApp");
+    const shareTwitterLink = document.getElementById("shareTwitter");
+    const copyNotice = document.getElementById("copyNotice");
+
     function clearError() {
       errorMessage.style.display = "none";
       errorMessage.textContent = "";
@@ -949,7 +1063,6 @@
       if (saved === "dark" || saved === "light") {
         applyTheme(saved);
       } else {
-        // حسب تفضيل النظام
         const prefersDark = window.matchMedia &&
           window.matchMedia("(prefers-color-scheme: dark)").matches;
         applyTheme(prefersDark ? "dark" : "light");
@@ -964,7 +1077,6 @@
     }
 
     function resetFormAndResults() {
-      // reset form
       form.reset();
       document.getElementById("activity").value = "";
 
@@ -988,6 +1100,53 @@
       resultBox.classList.remove("visible");
     }
 
+    // SHARE FUNCTIONS
+    function setupShareLinks() {
+      const url = window.location.href;
+      const text =
+        "Check out CalorieFlow – a smart calorie calculator for your daily health journey:";
+      const encodedUrl = encodeURIComponent(url);
+      const encodedText = encodeURIComponent(text);
+
+      if (shareWhatsAppLink) {
+        shareWhatsAppLink.href = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+      }
+
+      if (shareTwitterLink) {
+        shareTwitterLink.href = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+      }
+    }
+
+    function showCopyMessage(message, type) {
+      if (!copyNotice) return;
+      copyNotice.textContent = message;
+      copyNotice.classList.remove("success", "error");
+      if (type) copyNotice.classList.add(type);
+      setTimeout(() => {
+        copyNotice.textContent = "";
+        copyNotice.classList.remove("success", "error");
+      }, 2200);
+    }
+
+    async function handleCopyLink() {
+      const url = window.location.href;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(url);
+          showCopyMessage("Link copied to clipboard!", "success");
+        } else {
+          // fallback
+          const ok = window.prompt("Copy this link:", url);
+          if (ok !== null) {
+            showCopyMessage("Link shown. Copy it manually.", "success");
+          }
+        }
+      } catch (err) {
+        console.error("Copy failed", err);
+        showCopyMessage("Could not copy link. Please copy it manually.", "error");
+      }
+    }
+
     // Clear errors + حفظ البيانات عند التعديل
     form.querySelectorAll("input, select").forEach((el) => {
       el.addEventListener("input", () => {
@@ -1002,6 +1161,10 @@
 
     resetButton.addEventListener("click", resetFormAndResults);
     themeToggleBtn.addEventListener("click", toggleTheme);
+
+    if (shareCopyBtn) {
+      shareCopyBtn.addEventListener("click", handleCopyLink);
+    }
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -1134,6 +1297,7 @@
     // تشغيل عند فتح الصفحة
     loadTheme();
     loadFormState();
+    setupShareLinks();
   </script>
 </body>
 </html>
