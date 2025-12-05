@@ -340,6 +340,49 @@
       color: var(--text-muted);
     }
 
+    /* 🧾 Daily plan box */
+    .dayplan-box {
+      margin-top: 10px;
+      border-radius: 14px;
+      background: #f3f4ff;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+    }
+
+    .dayplan-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1d4ed8;
+    }
+
+    .dayplan-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 0.6fr;
+      align-items: center;
+      padding: 3px 0;
+    }
+
+    .dayplan-label {
+      color: var(--text-main);
+    }
+
+    .dayplan-value {
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .dayplan-percent {
+      text-align: right;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    @media (max-width: 600px) {
+      .dayplan-row {
+        grid-template-columns: 1.2fr 1fr 0.7fr;
+      }
+    }
+
     footer {
       margin-top: 12px;
       text-align: center;
@@ -489,7 +532,7 @@
               <div class="result-value" id="goalValue">— kcal</div>
             </div>
 
-            <!-- 🧬 ماكروز -->
+            <!-- 🧬 Macros -->
             <div class="macro-box">
               <div class="macro-chip">
                 <div class="macro-label">Protein</div>
@@ -505,6 +548,31 @@
                 <div class="macro-label">Carbs</div>
                 <div class="macro-value" id="carbValue">— g/day</div>
                 <div class="macro-note">Remaining calories after protein & fats.</div>
+              </div>
+            </div>
+
+            <!-- 🧾 Daily plan -->
+            <div class="dayplan-box">
+              <div class="dayplan-title">Suggested daily split</div>
+              <div class="dayplan-row">
+                <span class="dayplan-label">Breakfast</span>
+                <span class="dayplan-value" id="breakfastValue">— kcal</span>
+                <span class="dayplan-percent">30%</span>
+              </div>
+              <div class="dayplan-row">
+                <span class="dayplan-label">Lunch</span>
+                <span class="dayplan-value" id="lunchValue">— kcal</span>
+                <span class="dayplan-percent">40%</span>
+              </div>
+              <div class="dayplan-row">
+                <span class="dayplan-label">Dinner</span>
+                <span class="dayplan-value" id="dinnerValue">— kcal</span>
+                <span class="dayplan-percent">25%</span>
+              </div>
+              <div class="dayplan-row">
+                <span class="dayplan-label">Snacks</span>
+                <span class="dayplan-value" id="snacksValue">— kcal</span>
+                <span class="dayplan-percent">5%</span>
               </div>
             </div>
 
@@ -542,6 +610,10 @@
     const proteinValueEl = document.getElementById("proteinValue");
     const fatValueEl = document.getElementById("fatValue");
     const carbValueEl = document.getElementById("carbValue");
+    const breakfastValueEl = document.getElementById("breakfastValue");
+    const lunchValueEl = document.getElementById("lunchValue");
+    const dinnerValueEl = document.getElementById("dinnerValue");
+    const snacksValueEl = document.getElementById("snacksValue");
 
     function clearError() {
       errorMessage.style.display = "none";
@@ -630,21 +702,17 @@
       // Goal adjustment
       let suggestedCalories = maintenanceCalories;
       let description = "";
-      let goalLabel = "";
 
       if (goal.value === "lose") {
         suggestedCalories = maintenanceCalories * 0.85; // -15%
-        goalLabel = "Lose weight";
         description =
           "To lose weight, a gentle calorie deficit is recommended. These calories may help you lose weight gradually while maintaining energy for daily activities.";
       } else if (goal.value === "maintain") {
         suggestedCalories = maintenanceCalories;
-        goalLabel = "Maintain weight";
         description =
           "To maintain your current weight, try to stay close to this calorie range and keep a consistent activity level.";
       } else if (goal.value === "gain") {
         suggestedCalories = maintenanceCalories * 1.15; // +15%
-        goalLabel = "Gain weight";
         description =
           "To gain weight, especially muscle mass, a slight calorie surplus combined with strength training can be effective.";
       }
@@ -672,16 +740,28 @@
       let carbsGrams = (suggestedCalories - (caloriesFromProtein + caloriesFromFat)) / 4;
       if (carbsGrams < 0) carbsGrams = 0;
 
-      // Display results
+      // Display results (main)
       bmrValueEl.textContent = bmrRounded + " kcal";
       maintenanceValueEl.textContent = maintenanceRounded + " kcal";
       goalValueEl.textContent = suggestedRounded + " kcal";
 
+      // Display macros
       proteinValueEl.textContent =
         Math.round(proteinMin) + "–" + Math.round(proteinMax) + " g/day";
       fatValueEl.textContent =
         Math.round(fatMin) + "–" + Math.round(fatMax) + " g/day";
       carbValueEl.textContent = "≈ " + Math.round(carbsGrams) + " g/day";
+
+      // Daily plan split (30% / 40% / 25% / 5%)
+      const breakfastCals = suggestedCalories * 0.30;
+      const lunchCals = suggestedCalories * 0.40;
+      const dinnerCals = suggestedCalories * 0.25;
+      const snacksCals = suggestedCalories * 0.05;
+
+      breakfastValueEl.textContent = Math.round(breakfastCals) + " kcal";
+      lunchValueEl.textContent = Math.round(lunchCals) + " kcal";
+      dinnerValueEl.textContent = Math.round(dinnerCals) + " kcal";
+      snacksValueEl.textContent = Math.round(snacksCals) + " kcal";
 
       goalDescriptionEl.textContent = description;
 
