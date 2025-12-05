@@ -38,9 +38,30 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: url("background.png") center / cover no-repeat fixed;
+      background-color: #e5f0ff;
+      background-image: url("background.png");
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       color: var(--text-main);
       padding: 24px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* 🌙 Dark mode overrides (تغيير الألوان في الوضع الليلي) */
+    body.dark-mode {
+      --bg-gradient-start: #020617;
+      --bg-gradient-end: #020617;
+      --card-bg: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.2);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --error: #f97373;
+      --border: #1f2937;
+
+      background-color: #020617;
     }
 
     .app-container {
@@ -70,6 +91,38 @@
     header p {
       font-size: 0.95rem;
       color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    /* زر تغيير الثيم */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--text-main);
+      backdrop-filter: blur(6px);
+      transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+      border-color: var(--accent-soft);
+    }
+
+    .theme-toggle .theme-icon {
+      font-size: 1rem;
+    }
+
+    body.dark-mode .theme-toggle {
+      background: rgba(15, 23, 42, 0.9);
     }
 
     .calculator-card {
@@ -80,6 +133,7 @@
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 24px;
+      transition: background 0.25s ease, box-shadow 0.25s ease;
     }
 
     @media (max-width: 768px) {
@@ -147,8 +201,13 @@
       border: 1px solid var(--border);
       font-size: 0.85rem;
       outline: none;
-      transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease;
+      transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease, background 0.2s ease;
       background: #f9fafb;
+    }
+
+    body.dark-mode input[type="number"],
+    body.dark-mode select {
+      background: #020617;
     }
 
     input[type="number"]:focus,
@@ -157,6 +216,11 @@
       box-shadow: 0 0 0 1px var(--accent-soft);
       background: #ffffff;
       transform: translateY(-1px);
+    }
+
+    body.dark-mode input[type="number"]:focus,
+    body.dark-mode select:focus {
+      background: #020617;
     }
 
     input[type="number"]::placeholder {
@@ -183,6 +247,10 @@
       transition: border 0.2s ease, background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease;
     }
 
+    body.dark-mode .chip-option {
+      background: #020617;
+    }
+
     .chip-option input {
       accent-color: var(--accent);
       cursor: pointer;
@@ -193,6 +261,11 @@
       background: #ffffff;
       transform: translateY(-1px);
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    body.dark-mode .chip-option:hover {
+      background: #020617;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.6);
     }
 
     .btn-primary {
@@ -218,6 +291,11 @@
       background: #1d4ed8;
       transform: translateY(-1px) scale(1.01);
       box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
+    }
+
+    body.dark-mode .btn-primary:hover {
+      background: #0ea5e9;
+      box-shadow: 0 14px 30px rgba(14, 165, 233, 0.5);
     }
 
     .btn-primary:active {
@@ -247,8 +325,13 @@
       padding: 14px 14px;
       opacity: 0;
       transform: translateY(6px);
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
       font-size: 0.9rem;
+    }
+
+    body.dark-mode .result-box {
+      background: #020617;
+      border-color: rgba(148, 163, 184, 0.6);
     }
 
     .result-box.visible {
@@ -267,6 +350,11 @@
       font-weight: 500;
       color: #1d4ed8;
       margin-bottom: 6px;
+    }
+
+    body.dark-mode .result-tag {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
     }
 
     .result-row {
@@ -324,6 +412,11 @@
       font-size: 0.78rem;
     }
 
+    body.dark-mode .macro-chip {
+      background: #020617;
+      border: 1px solid #1f2937;
+    }
+
     .macro-label {
       font-weight: 600;
       margin-bottom: 2px;
@@ -349,10 +442,19 @@
       font-size: 0.8rem;
     }
 
+    body.dark-mode .dayplan-box {
+      background: #020617;
+      border: 1px solid #1f2937;
+    }
+
     .dayplan-title {
       font-weight: 600;
       margin-bottom: 6px;
       color: #1d4ed8;
+    }
+
+    body.dark-mode .dayplan-title {
+      color: #38bdf8;
     }
 
     .dayplan-row {
@@ -397,6 +499,12 @@
       <img src="logo.png.png" alt="CalorieFlow logo" class="app-logo" />
       <h1>CalorieFlow</h1>
       <p>Smart calorie calculator for your daily health journey.</p>
+
+      <!-- 🌙 زر تغيير الثيم -->
+      <button id="themeToggle" class="theme-toggle" type="button">
+        <span class="theme-icon">🌙</span>
+        <span class="theme-label">Dark mode</span>
+      </button>
     </header>
 
     <main>
@@ -615,6 +723,10 @@
     const dinnerValueEl = document.getElementById("dinnerValue");
     const snacksValueEl = document.getElementById("snacksValue");
 
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const themeIcon = themeToggleBtn.querySelector(".theme-icon");
+    const themeLabel = themeToggleBtn.querySelector(".theme-label");
+
     function clearError() {
       errorMessage.style.display = "none";
       errorMessage.textContent = "";
@@ -624,6 +736,34 @@
       errorMessage.textContent = msg;
       errorMessage.style.display = "block";
     }
+
+    // تحديث نص زر الثيم
+    function updateThemeButton(mode) {
+      if (mode === "dark") {
+        themeIcon.textContent = "☀️";
+        themeLabel.textContent = "Light mode";
+      } else {
+        themeIcon.textContent = "🌙";
+        themeLabel.textContent = "Dark mode";
+      }
+    }
+
+    // تحميل الثيم المحفوظ من المتصفح
+    const savedTheme = localStorage.getItem("cf-theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark-mode");
+      updateThemeButton("dark");
+    } else {
+      updateThemeButton("light");
+    }
+
+    // تبديل الثيم عند الضغط على الزر
+    themeToggleBtn.addEventListener("click", () => {
+      const isDark = document.body.classList.toggle("dark-mode");
+      const mode = isDark ? "dark" : "light";
+      localStorage.setItem("cf-theme", mode);
+      updateThemeButton(mode);
+    });
 
     // Clear errors when user changes inputs
     form.querySelectorAll("input, select").forEach((el) => {
