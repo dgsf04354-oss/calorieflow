@@ -6,7 +6,7 @@
   <title>CalorieFlow | Smart Calorie & Diet Calculator</title>
   <meta name="description" content="CalorieFlow is a smart calorie calculator that helps you estimate your daily calorie needs based on gender, age, height, weight and activity level." />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" href="logo.png.png" type="image/png" />
+  <link rel="icon" href="logo.png.png" type="image/png" />
   <link rel="shortcut icon" href="logo.png.png" type="image/png" />
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -48,25 +48,24 @@
       max-width: 900px;
     }
 
-   header {
-  text-align: center;
-  margin-bottom: 20px;
-}
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-.app-logo {
-  width: 160px;
-  height: 160px;
-  object-fit: contain;
-  margin-bottom: 14px;
-}
+    .app-logo {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 14px;
+    }
 
-header h1 {
-  font-size: 2.1rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  margin-bottom: 6px;
-}
-
+    header h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+    }
 
     header p {
       font-size: 0.95rem;
@@ -302,6 +301,45 @@ header h1 {
       color: var(--text-main);
     }
 
+    /* 💪 كرت الماكروز */
+    .macro-box {
+      margin-top: 10px;
+      border-top: 1px dashed rgba(148, 163, 184, 0.8);
+      padding-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .macro-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .macro-chip {
+      background: rgba(37, 99, 235, 0.06);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+    }
+
+    .macro-label {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .macro-value {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .macro-note {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
     footer {
       margin-top: 12px;
       text-align: center;
@@ -312,12 +350,11 @@ header h1 {
 </head>
 <body>
   <div class="app-container">
-        <header>
+    <header>
       <img src="logo.png.png" alt="CalorieFlow logo" class="app-logo" />
       <h1>CalorieFlow</h1>
       <p>Smart calorie calculator for your daily health journey.</p>
     </header>
-
 
     <main>
       <section class="calculator-card">
@@ -448,8 +485,27 @@ header h1 {
             </div>
 
             <div class="result-row">
-              <div class="result-label">Suggested Daily Calories</div>
+              <div class="result-label">Target Calories</div>
               <div class="result-value" id="goalValue">— kcal</div>
+            </div>
+
+            <!-- 🧬 ماكروز -->
+            <div class="macro-box">
+              <div class="macro-chip">
+                <div class="macro-label">Protein</div>
+                <div class="macro-value" id="proteinValue">— g/day</div>
+                <div class="macro-note">Around 1.6–2.2 g per kg of body weight.</div>
+              </div>
+              <div class="macro-chip">
+                <div class="macro-label">Fats</div>
+                <div class="macro-value" id="fatValue">— g/day</div>
+                <div class="macro-note">Around 0.8–1.0 g per kg of body weight.</div>
+              </div>
+              <div class="macro-chip">
+                <div class="macro-label">Carbs</div>
+                <div class="macro-value" id="carbValue">— g/day</div>
+                <div class="macro-note">Remaining calories after protein & fats.</div>
+              </div>
             </div>
 
             <p class="result-note" id="goalDescription">
@@ -483,6 +539,9 @@ header h1 {
     const maintenanceValueEl = document.getElementById("maintenanceValue");
     const goalValueEl = document.getElementById("goalValue");
     const goalDescriptionEl = document.getElementById("goalDescription");
+    const proteinValueEl = document.getElementById("proteinValue");
+    const fatValueEl = document.getElementById("fatValue");
+    const carbValueEl = document.getElementById("carbValue");
 
     function clearError() {
       errorMessage.style.display = "none";
@@ -571,30 +630,59 @@ header h1 {
       // Goal adjustment
       let suggestedCalories = maintenanceCalories;
       let description = "";
+      let goalLabel = "";
 
       if (goal.value === "lose") {
         suggestedCalories = maintenanceCalories * 0.85; // -15%
+        goalLabel = "Lose weight";
         description =
           "To lose weight, a gentle calorie deficit is recommended. These calories may help you lose weight gradually while maintaining energy for daily activities.";
       } else if (goal.value === "maintain") {
         suggestedCalories = maintenanceCalories;
+        goalLabel = "Maintain weight";
         description =
           "To maintain your current weight, try to stay close to this calorie range and keep a consistent activity level.";
       } else if (goal.value === "gain") {
         suggestedCalories = maintenanceCalories * 1.15; // +15%
+        goalLabel = "Gain weight";
         description =
           "To gain weight, especially muscle mass, a slight calorie surplus combined with strength training can be effective.";
       }
 
-      // Round values
+      // Round main values
       const bmrRounded = Math.round(bmr);
       const maintenanceRounded = Math.round(maintenanceCalories);
       const suggestedRounded = Math.round(suggestedCalories);
+
+      // Macros
+      // Protein: 1.6–2.2 g/kg
+      const proteinMin = weight * 1.6;
+      const proteinMax = weight * 2.2;
+      const proteinMid = (proteinMin + proteinMax) / 2;
+
+      // Fat: 0.8–1.0 g/kg
+      const fatMin = weight * 0.8;
+      const fatMax = weight * 1.0;
+      const fatMid = (fatMin + fatMax) / 2;
+
+      // Calories taken by protein and fat
+      const caloriesFromProtein = proteinMid * 4;
+      const caloriesFromFat = fatMid * 9;
+
+      let carbsGrams = (suggestedCalories - (caloriesFromProtein + caloriesFromFat)) / 4;
+      if (carbsGrams < 0) carbsGrams = 0;
 
       // Display results
       bmrValueEl.textContent = bmrRounded + " kcal";
       maintenanceValueEl.textContent = maintenanceRounded + " kcal";
       goalValueEl.textContent = suggestedRounded + " kcal";
+
+      proteinValueEl.textContent =
+        Math.round(proteinMin) + "–" + Math.round(proteinMax) + " g/day";
+      fatValueEl.textContent =
+        Math.round(fatMin) + "–" + Math.round(fatMax) + " g/day";
+      carbValueEl.textContent = "≈ " + Math.round(carbsGrams) + " g/day";
+
       goalDescriptionEl.textContent = description;
 
       // Show result card with animation
@@ -606,16 +694,3 @@ header h1 {
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
