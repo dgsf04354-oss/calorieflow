@@ -315,6 +315,39 @@
       font-size: 1.1rem;
       line-height: 1;
     }
+        /* زر إعادة التعيين */
+    .btn-secondary {
+      margin-top: 8px;
+      width: 100%;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--text-main);
+      border-color: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    body.dark-mode .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: #1f2937;
+    }
+
+    body.dark-mode .btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      border-color: #334155;
+    }
+
 
     .error-message {
       margin-top: 8px;
@@ -712,12 +745,17 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary">
               <span class="icon">⚡</span>
               <span>Calculate Calories</span>
             </button>
 
+            <button type="button" id="resetButton" class="btn-secondary">
+              Reset all fields
+            </button>
+
             <div id="errorMessage" class="error-message"></div>
+
           </form>
         </section>
 
@@ -863,7 +901,7 @@
   </div>
 
   <script>
-    const form = document.getElementById("calorieForm");
+        const form = document.getElementById("calorieForm");
     const errorMessage = document.getElementById("errorMessage");
     const resultBox = document.getElementById("resultBox");
     const bmrValueEl = document.getElementById("bmrValue");
@@ -877,6 +915,7 @@
     const lunchValueEl = document.getElementById("lunchValue");
     const dinnerValueEl = document.getElementById("dinnerValue");
     const snacksValueEl = document.getElementById("snacksValue");
+    const resetButton = document.getElementById("resetButton"); // ✅ جديد
 
     const themeToggleBtn = document.getElementById("themeToggle");
     const themeIcon = themeToggleBtn.querySelector(".theme-icon");
@@ -1140,5 +1179,6 @@
   </script>
 </body>
 </html>
+
 
 
