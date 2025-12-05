@@ -46,17 +46,25 @@
       max-width: 900px;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+   header {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    header h1 {
-      font-size: 2.1rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      margin-bottom: 6px;
-    }
+.app-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+header h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+
 
     header p {
       font-size: 0.95rem;
@@ -302,10 +310,12 @@
 </head>
 <body>
   <div class="app-container">
-    <header>
+        <header>
+      <img src="logo.png.png" alt="CalorieFlow logo" class="app-logo" />
       <h1>CalorieFlow</h1>
       <p>Smart calorie calculator for your daily health journey.</p>
     </header>
+
 
     <main>
       <section class="calculator-card">
@@ -594,4 +604,5 @@
   </script>
 </body>
 </html>
+
 
