@@ -4,26 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="google-site-verification" content="XY_Df8ypC1IlrIbuwUjIjdFXsVXKzQ6uSsnDmR5allU" />
   <title>CalorieFlow | Smart Calorie & Diet Calculator</title>
-  <meta name="description" content="CalorieFlow is a smart calorie calculator that helps you estimate your daily calorie needs based on gender, age, height, weight and activity level." />
+  <meta
+    name="description"
+    content="CalorieFlow is a smart calorie calculator that helps you estimate your daily calorie needs, macros and meal split based on your gender, age, height, weight and activity level."
+  />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
   <link rel="icon" href="logo.png.png" type="image/png" />
   <link rel="shortcut icon" href="logo.png.png" type="image/png" />
+
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
     :root {
       --bg-gradient-start: #f2e9ff;
       --bg-gradient-end: #e0f3ff;
       --card-bg: #ffffff;
+      --card-bg-soft: rgba(255, 255, 255, 0.92);
       --accent: #2563eb;
       --accent-soft: #dbeafe;
-      --text-main: #111827;
+      --text-main: #0f172a;
       --text-muted: #6b7280;
       --error: #dc2626;
       --border: #e5e7eb;
-      --radius-lg: 20px;
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
+      --radius-lg: 24px;
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.20);
+    }
+
+    body.dark-mode {
+      --card-bg: #020617;
+      --card-bg-soft: rgba(2, 6, 23, 0.96);
+      --accent: #0ea5e9;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border: #1f2937;
+      --shadow-soft: 0 28px 70px rgba(15, 23, 42, 0.9);
     }
 
     * {
@@ -36,125 +57,164 @@
       font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      background-color: #e5f0ff;
-      background-image: url("background.png");
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+      padding: 32px 24px;
       color: var(--text-main);
-      padding: 24px;
-      transition: background-color 0.25s ease, color 0.25s ease;
+      background: radial-gradient(circle at top, #f97316 0, transparent 60%),
+        radial-gradient(circle at bottom, #0ea5e9 0, transparent 55%),
+        linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      position: relative;
+      overflow-x: hidden;
     }
 
-    /* 🌙 Dark mode overrides */
-    body.dark-mode {
-      --bg-gradient-start: #020617;
-      --bg-gradient-end: #020617;
-      --card-bg: #020617;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.2);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --error: #f97373;
-      --border: #1f2937;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: url("background.png") center / cover no-repeat fixed;
+      filter: blur(6px) brightness(0.85);
+      opacity: 0.65;
+      z-index: -2;
+    }
 
-      background-color: #020617;
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(15, 23, 42, 0.50),
+        rgba(15, 23, 42, 0.25),
+        rgba(15, 23, 42, 0.65)
+      );
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    body.dark-mode::after {
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), transparent 55%),
+        radial-gradient(circle at bottom, rgba(251, 191, 36, 0.25), transparent 55%),
+        linear-gradient(to bottom, #020617, #020617);
+      opacity: 0.95;
     }
 
     .app-container {
       width: 100%;
-      max-width: 900px;
+      max-width: 1120px;
+      background: var(--card-bg-soft);
+      border-radius: 32px;
+      box-shadow: var(--shadow-soft);
+      padding: 24px 24px 26px;
+      backdrop-filter: blur(26px);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+    body.dark-mode .app-container {
+      border-color: rgba(15, 23, 42, 0.9);
     }
 
     header {
       text-align: center;
       margin-bottom: 20px;
-    }
-
-    .app-logo {
-      width: 160px;
-      height: 160px;
-      object-fit: contain;
-      margin-bottom: 14px;
+      position: relative;
     }
 
     header h1 {
-      font-size: 2.1rem;
+      font-size: 2.2rem;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
       margin-bottom: 6px;
     }
 
     header p {
       font-size: 0.95rem;
       color: var(--text-muted);
-      margin-bottom: 10px;
     }
 
-    /* زر تغيير الثيم */
+    .app-logo {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      border-radius: 999px;
+      border: 2px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 10px;
+      background: rgba(248, 250, 252, 0.9);
+    }
+
+    .theme-toggle-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
     .theme-toggle {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       padding: 6px 12px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.8);
-      font-size: 0.8rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(248, 250, 252, 0.9);
       cursor: pointer;
-      color: var(--text-main);
-      backdrop-filter: blur(6px);
-      transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      font-size: 0.8rem;
+      color: #111827;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
     }
 
-    .theme-toggle:hover {
-      background: #ffffff;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
-      border-color: var(--accent-soft);
-    }
-
-    .theme-toggle .theme-icon {
+    .theme-toggle span.icon {
       font-size: 1rem;
     }
 
     body.dark-mode .theme-toggle {
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      border-color: rgba(31, 41, 55, 0.9);
     }
 
     .calculator-card {
       background: var(--card-bg);
       border-radius: 26px;
-      box-shadow: var(--shadow-soft);
-      padding: 24px 20px;
+      padding: 22px 20px 20px;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 24px;
-      transition: background 0.25s ease, box-shadow 0.25s ease;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    @media (max-width: 900px) {
+      .calculator-card {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 768px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .app-container {
+        padding: 18px 14px 20px;
+        border-radius: 22px;
+      }
+
       .calculator-card {
-        grid-template-columns: 1fr;
-        padding: 20px 16px;
+        padding: 16px 12px 14px;
       }
     }
 
     .form-section {
       border-right: 1px solid var(--border);
-      padding-right: 20px;
+      padding-right: 18px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       .form-section {
         border-right: none;
         border-bottom: 1px solid var(--border);
         padding-right: 0;
-        padding-bottom: 18px;
-        margin-bottom: 4px;
+        padding-bottom: 16px;
+        margin-bottom: 8px;
       }
     }
 
@@ -194,7 +254,7 @@
       font-weight: 500;
     }
 
-        input[type="number"],
+    input[type="number"],
     select {
       width: 100%;
       padding: 9px 10px;
@@ -202,20 +262,10 @@
       border: 1px solid var(--border);
       font-size: 0.85rem;
       outline: none;
-      transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease, background 0.2s ease, color 0.2s ease;
+      transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease,
+        background 0.2s ease, color 0.2s ease;
       background: #f9fafb;
-      color: var(--text-main); /* ✅ خلي النص دائمًا بنفس لون النص العام */
-    }
-
-    body.dark-mode input[type="number"],
-    body.dark-mode select {
-      background: #020617;
-      color: var(--text-main); /* ✅ نص واضح في الوضع الليلي */
-    }
-
-    input[type="number"]::placeholder {
-      color: #9ca3af;
-      font-size: 0.8rem;
+      color: var(--text-main);
     }
 
     input[type="number"]:focus,
@@ -226,14 +276,16 @@
       transform: translateY(-1px);
     }
 
-    body.dark-mode input[type="number"]:focus,
-    body.dark-mode select:focus {
-      background: #020617;
-    }
-
     input[type="number"]::placeholder {
       color: #9ca3af;
       font-size: 0.8rem;
+    }
+
+    body.dark-mode input[type="number"],
+    body.dark-mode select {
+      background: #020617;
+      color: var(--text-main);
+      border-color: #1f2937;
     }
 
     .inline-options {
@@ -252,11 +304,8 @@
       font-size: 0.8rem;
       cursor: pointer;
       background: #f9fafb;
-      transition: border 0.2s ease, background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease;
-    }
-
-    body.dark-mode .chip-option {
-      background: #020617;
+      transition: border 0.2s ease, background 0.2s ease, transform 0.08s ease,
+        box-shadow 0.2s ease;
     }
 
     .chip-option input {
@@ -271,9 +320,8 @@
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
     }
 
-    body.dark-mode .chip-option:hover {
+    body.dark-mode .chip-option {
       background: #020617;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.6);
     }
 
     .btn-primary {
@@ -301,9 +349,13 @@
       box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
     }
 
+    body.dark-mode .btn-primary {
+      box-shadow: 0 13px 30px rgba(14, 165, 233, 0.55);
+    }
+
     body.dark-mode .btn-primary:hover {
       background: #0ea5e9;
-      box-shadow: 0 14px 30px rgba(14, 165, 233, 0.5);
+      box-shadow: 0 16px 36px rgba(14, 165, 233, 0.7);
     }
 
     .btn-primary:active {
@@ -315,7 +367,8 @@
       font-size: 1.1rem;
       line-height: 1;
     }
-        /* زر إعادة التعيين */
+
+    /* زر إعادة التعيين */
     .btn-secondary {
       margin-top: 8px;
       width: 100%;
@@ -326,7 +379,8 @@
       color: var(--text-muted);
       font-size: 0.85rem;
       cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+        transform 0.08s ease;
     }
 
     .btn-secondary:hover {
@@ -348,7 +402,6 @@
       border-color: #334155;
     }
 
-
     .error-message {
       margin-top: 8px;
       font-size: 0.8rem;
@@ -366,13 +419,12 @@
       padding: 14px 14px;
       opacity: 0;
       transform: translateY(6px);
-      transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+      transition: opacity 0.25s ease, transform 0.25s ease;
       font-size: 0.9rem;
     }
 
     body.dark-mode .result-box {
       background: #020617;
-      border-color: rgba(148, 163, 184, 0.6);
     }
 
     .result-box.visible {
@@ -394,8 +446,7 @@
     }
 
     body.dark-mode .result-tag {
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
+      color: #0ea5e9;
     }
 
     .result-row {
@@ -419,229 +470,146 @@
       color: var(--text-muted);
     }
 
-    .tips-box {
-      margin-top: 6px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .tips-box strong {
-      color: var(--text-main);
-    }
-
-    /* 💪 كرت الماكروز */
-    .macro-box {
-      margin-top: 10px;
-      border-top: 1px dashed rgba(148, 163, 184, 0.8);
-      padding-top: 8px;
+    .results-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.87rem;
     }
 
-    @media (max-width: 600px) {
-      .macro-box {
+    @media (max-width: 1100px) {
+      .results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .results-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .macro-chip {
-      background: rgba(37, 99, 235, 0.06);
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size: 0.78rem;
+    .result-card {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(248, 250, 252, 0.7);
+      padding: 10px 11px;
     }
 
-    body.dark-mode .macro-chip {
-      background: #020617;
-      border: 1px solid #1f2937;
+    body.dark-mode .result-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: #1f2937;
     }
 
-    .macro-label {
+    .result-card-title {
+      font-size: 0.8rem;
       font-weight: 600;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
-    .macro-value {
+    .result-large {
+      font-size: 1rem;
       font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 2px;
     }
 
-    .macro-note {
-      font-size: 0.74rem;
+    .macro-range {
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
-    /* 🧾 Daily plan box */
-    .dayplan-box {
-      margin-top: 10px;
-      border-radius: 14px;
-      background: #f3f4ff;
-      padding: 10px 12px;
+    .split-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 3px;
+    }
+
+    .split-row span:last-child {
+      font-weight: 500;
+    }
+
+    .info-section {
+      margin-top: 18px;
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .info-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .info-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
       font-size: 0.8rem;
     }
 
-    body.dark-mode .dayplan-box {
-      background: #020617;
-      border: 1px solid #1f2937;
-    }
-
-    .dayplan-title {
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #1d4ed8;
-    }
-
-    body.dark-mode .dayplan-title {
-      color: #38bdf8;
-    }
-
-    .dayplan-row {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 0.6fr;
-      align-items: center;
-      padding: 3px 0;
-    }
-
-    .dayplan-label {
-      color: var(--text-main);
-    }
-
-    .dayplan-value {
-      text-align: right;
-      font-weight: 600;
-    }
-
-    .dayplan-percent {
-      text-align: right;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    @media (max-width: 600px) {
-      .dayplan-row {
-        grid-template-columns: 1.2fr 1fr 0.7fr;
+    @media (max-width: 900px) {
+      .info-grid {
+        grid-template-columns: 1fr;
       }
     }
 
+    .info-card {
+      background: rgba(248, 250, 252, 0.8);
+      border-radius: 18px;
+      padding: 11px 12px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+
+    body.dark-mode .info-card {
+      background: rgba(15, 23, 42, 0.98);
+      border-color: #020617;
+    }
+
+    .info-card h3 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .info-card ul {
+      margin-left: 16px;
+      margin-top: 4px;
+      display: grid;
+      gap: 2px;
+    }
+
+    .info-card li {
+      margin-bottom: 1px;
+    }
+
     footer {
-      margin-top: 12px;
+      margin-top: 10px;
       text-align: center;
       font-size: 0.75rem;
       color: var(--text-muted);
     }
-
-    /* 📚 Learn section (tips & SEO content) */
-    .learn-section {
-      margin-top: 28px;
-      padding: 18px 20px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-      font-size: 0.9rem;
-    }
-
-    body.dark-mode .learn-section {
-      background: rgba(15, 23, 42, 0.96);
-      border-color: #1f2937;
-      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.9);
-    }
-
-    .learn-header {
-      margin-bottom: 14px;
-    }
-
-    .learn-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .learn-header p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .learn-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    @media (max-width: 900px) {
-      .learn-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .learn-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .learn-card {
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: #f9fafb;
-      border: 1px solid rgba(226, 232, 240, 0.9);
-    }
-
-    body.dark-mode .learn-card {
-      background: #020617;
-      border-color: #1f2937;
-    }
-
-    .learn-card h3 {
-      font-size: 0.95rem;
-      margin-bottom: 6px;
-    }
-
-    .learn-card p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .learn-card ul {
-      padding-left: 18px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .learn-card ul li {
-      margin-bottom: 2px;
-    }
-        /* 📱 تحسين العرض على الشاشات الصغيرة */
-    @media (max-width: 600px) {
-      body {
-        padding: 12px;
-      }
-
-      .calculator-card {
-        padding: 16px 12px;
-      }
-    }
-
   </style>
 </head>
 <body>
   <div class="app-container">
     <header>
+      <div class="theme-toggle-wrapper">
+        <button id="themeToggle" class="theme-toggle" type="button">
+          <span class="icon">🌙</span>
+          <span class="label">Dark mode</span>
+        </button>
+      </div>
       <img src="logo.png.png" alt="CalorieFlow logo" class="app-logo" />
       <h1>CalorieFlow</h1>
       <p>Smart calorie calculator for your daily health journey.</p>
-
-      <!-- 🌙 زر تغيير الثيم -->
-      <button id="themeToggle" class="theme-toggle" type="button">
-        <span class="theme-icon">🌙</span>
-        <span class="theme-label">Dark mode</span>
-      </button>
     </header>
 
     <main>
@@ -745,7 +713,7 @@
               </div>
             </div>
 
-                        <button type="submit" class="btn-primary">
+            <button type="submit" class="btn-primary">
               <span class="icon">⚡</span>
               <span>Calculate Calories</span>
             </button>
@@ -755,7 +723,6 @@
             </button>
 
             <div id="errorMessage" class="error-message"></div>
-
           </form>
         </section>
 
@@ -782,78 +749,74 @@
               <div class="result-value" id="goalValue">— kcal</div>
             </div>
 
-            <!-- 🧬 Macros -->
-            <div class="macro-box">
-              <div class="macro-chip">
-                <div class="macro-label">Protein</div>
-                <div class="macro-value" id="proteinValue">— g/day</div>
-                <div class="macro-note">Around 1.6–2.2 g per kg of body weight.</div>
-              </div>
-              <div class="macro-chip">
-                <div class="macro-label">Fats</div>
-                <div class="macro-value" id="fatValue">— g/day</div>
-                <div class="macro-note">Around 0.8–1.0 g per kg of body weight.</div>
-              </div>
-              <div class="macro-chip">
-                <div class="macro-label">Carbs</div>
-                <div class="macro-value" id="carbValue">— g/day</div>
-                <div class="macro-note">Remaining calories after protein & fats.</div>
-              </div>
-            </div>
-
-            <!-- 🧾 Daily plan -->
-            <div class="dayplan-box">
-              <div class="dayplan-title">Suggested daily split</div>
-              <div class="dayplan-row">
-                <span class="dayplan-label">Breakfast</span>
-                <span class="dayplan-value" id="breakfastValue">— kcal</span>
-                <span class="dayplan-percent">30%</span>
-              </div>
-              <div class="dayplan-row">
-                <span class="dayplan-label">Lunch</span>
-                <span class="dayplan-value" id="lunchValue">— kcal</span>
-                <span class="dayplan-percent">40%</span>
-              </div>
-              <div class="dayplan-row">
-                <span class="dayplan-label">Dinner</span>
-                <span class="dayplan-value" id="dinnerValue">— kcal</span>
-                <span class="dayplan-percent">25%</span>
-              </div>
-              <div class="dayplan-row">
-                <span class="dayplan-label">Snacks</span>
-                <span class="dayplan-value" id="snacksValue">— kcal</span>
-                <span class="dayplan-percent">5%</span>
-              </div>
-            </div>
-
             <p class="result-note" id="goalDescription">
               Fill in your details, choose your activity level and goal, then
               click "Calculate Calories" to see your personalized results.
             </p>
 
-            <div class="tips-box">
-              <strong>Note:</strong> These numbers are estimates. Your real
-              calorie needs can vary based on metabolism, health conditions,
-              body composition, and many other personal factors. Consider
-              consulting a health or nutrition professional for personalized
-              advice.
+            <div class="results-grid">
+              <!-- Protein card -->
+              <div class="result-card">
+                <div class="result-card-title">Protein</div>
+                <div class="result-large" id="proteinValue">— g/day</div>
+                <div class="macro-range">
+                  Around 1.6–2.2 g per kg of body weight.
+                </div>
+              </div>
+
+              <!-- Fats card -->
+              <div class="result-card">
+                <div class="result-card-title">Fats</div>
+                <div class="result-large" id="fatValue">— g/day</div>
+                <div class="macro-range">
+                  Around 0.8–1.0 g per kg of body weight.
+                </div>
+              </div>
+
+              <!-- Carbs card -->
+              <div class="result-card">
+                <div class="result-card-title">Carbs</div>
+                <div class="result-large" id="carbValue">— g/day</div>
+                <div class="macro-range">
+                  Remaining calories after protein & fats.
+                </div>
+              </div>
+
+              <!-- Split card -->
+              <div class="result-card">
+                <div class="result-card-title">Suggested daily split</div>
+                <div class="split-row">
+                  <span>Breakfast</span>
+                  <span id="breakfastValue">— kcal</span>
+                </div>
+                <div class="split-row">
+                  <span>Lunch</span>
+                  <span id="lunchValue">— kcal</span>
+                </div>
+                <div class="split-row">
+                  <span>Dinner</span>
+                  <span id="dinnerValue">— kcal</span>
+                </div>
+                <div class="split-row">
+                  <span>Snacks</span>
+                  <span id="snacksValue">— kcal</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
       </section>
 
-      <!-- 📚 Learn more section (SEO + tips) -->
-      <section class="learn-section" id="calorieflow-guide">
-        <div class="learn-header">
-          <h2>How to use CalorieFlow effectively</h2>
-          <p>
-            This short guide explains how to read your results and use them in a healthy,
-            realistic way. It is not medical advice, but a starting point for better habits.
-          </p>
-        </div>
+      <!-- INFO SECTION -->
+      <section class="info-section">
+        <h2 class="info-title">How to use CalorieFlow effectively</h2>
+        <p class="info-subtitle">
+          This short guide explains how to read your results and use them in a healthy,
+          realistic way. It is not medical advice, but a starting point for better habits.
+        </p>
 
-        <div class="learn-grid">
-          <article class="learn-card">
+        <div class="info-grid">
+          <article class="info-card">
             <h3>1. Understand your maintenance calories</h3>
             <p>
               Your maintenance calories are the amount of energy your body needs to keep your
@@ -866,7 +829,7 @@
             </ul>
           </article>
 
-          <article class="learn-card">
+          <article class="info-card">
             <h3>2. Safe fat loss strategy</h3>
             <p>
               For most people, a moderate calorie deficit is safer and easier to maintain than
@@ -875,18 +838,22 @@
             <ul>
               <li>Target a deficit of about 15–20% below maintenance.</li>
               <li>Prioritise protein and whole foods to stay full.</li>
-              <li>Combine calorie control with walking and resistance training.</li>
+              <li>
+                Combine calorie control with walking and resistance training.
+              </li>
             </ul>
           </article>
 
-          <article class="learn-card">
+          <article class="info-card">
             <h3>3. Building muscle & strength</h3>
             <p>
               To gain quality weight, focus on progressive training and a small calorie surplus.
             </p>
             <ul>
               <li>Eat around 5–15% above maintenance calories.</li>
-              <li>Train with weights 2–4 times per week, focusing on compound movements.</li>
+              <li>
+                Train with weights 2–4 times per week, focusing on compound movements.
+              </li>
               <li>Keep protein high and sleep at least 7 hours per night.</li>
             </ul>
           </article>
@@ -901,7 +868,10 @@
   </div>
 
   <script>
-        const form = document.getElementById("calorieForm");
+    const STORAGE_KEY_FORM = "calorieflow_form_v1";
+    const STORAGE_KEY_THEME = "calorieflow_theme_v1";
+
+    const form = document.getElementById("calorieForm");
     const errorMessage = document.getElementById("errorMessage");
     const resultBox = document.getElementById("resultBox");
     const bmrValueEl = document.getElementById("bmrValue");
@@ -915,14 +885,8 @@
     const lunchValueEl = document.getElementById("lunchValue");
     const dinnerValueEl = document.getElementById("dinnerValue");
     const snacksValueEl = document.getElementById("snacksValue");
-    const resetButton = document.getElementById("resetButton"); // ✅ جديد
-
+    const resetButton = document.getElementById("resetButton");
     const themeToggleBtn = document.getElementById("themeToggle");
-    const themeIcon = themeToggleBtn.querySelector(".theme-icon");
-    const themeLabel = themeToggleBtn.querySelector(".theme-label");
-
-    const STORAGE_KEY_THEME = "cf-theme";
-    const STORAGE_KEY_FORM = "cf-last-inputs";
 
     function clearError() {
       errorMessage.style.display = "none";
@@ -934,100 +898,110 @@
       errorMessage.style.display = "block";
     }
 
-    // تحديث نص زر الثيم
-    function updateThemeButton(mode) {
-      if (mode === "dark") {
-        themeIcon.textContent = "☀️";
-        themeLabel.textContent = "Light mode";
-      } else {
-        themeIcon.textContent = "🌙";
-        themeLabel.textContent = "Dark mode";
-      }
-    }
-
-    // تحميل الثيم المحفوظ من المتصفح
-    (function initTheme() {
-      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
-      if (savedTheme === "dark") {
-        document.body.classList.add("dark-mode");
-        updateThemeButton("dark");
-      } else {
-        updateThemeButton("light");
-      }
-    })();
-
-    // تبديل الثيم عند الضغط على الزر
-    themeToggleBtn.addEventListener("click", () => {
-      const isDark = document.body.classList.toggle("dark-mode");
-      const mode = isDark ? "dark" : "light";
-      localStorage.setItem(STORAGE_KEY_THEME, mode);
-      updateThemeButton(mode);
-    });
-
-    // حفظ بيانات النموذج في المتصفح
     function saveFormState() {
-      const gender = form.querySelector('input[name="gender"]:checked');
-      const goal = form.querySelector('input[name="goal"]:checked');
       const data = {
-        gender: gender ? gender.value : "",
-        goal: goal ? goal.value : "",
+        gender: form.querySelector('input[name="gender"]:checked')?.value || "",
+        goal: form.querySelector('input[name="goal"]:checked')?.value || "",
         age: document.getElementById("age").value || "",
         height: document.getElementById("height").value || "",
         weight: document.getElementById("weight").value || "",
-        activity: document.getElementById("activity").value || ""
+        activity: document.getElementById("activity").value || "",
       };
       localStorage.setItem(STORAGE_KEY_FORM, JSON.stringify(data));
     }
 
-    // تحميل بيانات النموذج من المتصفح
     function loadFormState() {
+      const raw = localStorage.getItem(STORAGE_KEY_FORM);
+      if (!raw) return;
       try {
-        const raw = localStorage.getItem(STORAGE_KEY_FORM);
-        if (!raw) return;
         const data = JSON.parse(raw);
-
         if (data.age) document.getElementById("age").value = data.age;
         if (data.height) document.getElementById("height").value = data.height;
         if (data.weight) document.getElementById("weight").value = data.weight;
         if (data.activity) document.getElementById("activity").value = data.activity;
-
         if (data.gender) {
-          const gEl = form.querySelector(
-            `input[name="gender"][value="${data.gender}"]`
-          );
-          if (gEl) gEl.checked = true;
+          const g = form.querySelector('input[name="gender"][value="' + data.gender + '"]');
+          if (g) g.checked = true;
         }
-
         if (data.goal) {
-          const goalEl = form.querySelector(
-            `input[name="goal"][value="${data.goal}"]`
-          );
-          if (goalEl) goalEl.checked = true;
-        }
-
-        // لو كل البيانات موجودة نحسب النتائج تلقائيا
-        if (
-          data.gender &&
-          data.goal &&
-          data.age &&
-          data.height &&
-          data.weight &&
-          data.activity
-        ) {
-          setTimeout(() => {
-            form.dispatchEvent(new Event("submit", { cancelable: true }));
-          }, 0);
+          const g2 = form.querySelector('input[name="goal"][value="' + data.goal + '"]');
+          if (g2) g2.checked = true;
         }
       } catch (e) {
-        console.warn("Could not load saved form state", e);
+        console.error("Failed to load saved form", e);
       }
     }
 
-    // Clear errors when user changes inputs
+    function applyTheme(theme) {
+      if (theme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggleBtn.querySelector(".icon").textContent = "☀️";
+        themeToggleBtn.querySelector(".label").textContent = "Light mode";
+      } else {
+        document.body.classList.remove("dark-mode");
+        themeToggleBtn.querySelector(".icon").textContent = "🌙";
+        themeToggleBtn.querySelector(".label").textContent = "Dark mode";
+      }
+    }
+
+    function loadTheme() {
+      const saved = localStorage.getItem(STORAGE_KEY_THEME);
+      if (saved === "dark" || saved === "light") {
+        applyTheme(saved);
+      } else {
+        // حسب تفضيل النظام
+        const prefersDark = window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        applyTheme(prefersDark ? "dark" : "light");
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.contains("dark-mode");
+      const newTheme = isDark ? "light" : "dark";
+      applyTheme(newTheme);
+      localStorage.setItem(STORAGE_KEY_THEME, newTheme);
+    }
+
+    function resetFormAndResults() {
+      // reset form
+      form.reset();
+      document.getElementById("activity").value = "";
+
+      clearError();
+      localStorage.removeItem(STORAGE_KEY_FORM);
+
+      bmrValueEl.textContent = "— kcal";
+      maintenanceValueEl.textContent = "— kcal";
+      goalValueEl.textContent = "— kcal";
+      proteinValueEl.textContent = "— g/day";
+      fatValueEl.textContent = "— g/day";
+      carbValueEl.textContent = "— g/day";
+      breakfastValueEl.textContent = "— kcal";
+      lunchValueEl.textContent = "— kcal";
+      dinnerValueEl.textContent = "— kcal";
+      snacksValueEl.textContent = "— kcal";
+
+      goalDescriptionEl.textContent =
+        'Fill in your details, choose your activity level and goal, then click "Calculate Calories" to see your personalized results.';
+
+      resultBox.classList.remove("visible");
+    }
+
+    // Clear errors + حفظ البيانات عند التعديل
     form.querySelectorAll("input, select").forEach((el) => {
-      el.addEventListener("input", clearError);
-      el.addEventListener("change", clearError);
+      el.addEventListener("input", () => {
+        clearError();
+        saveFormState();
+      });
+      el.addEventListener("change", () => {
+        clearError();
+        saveFormState();
+      });
     });
+
+    resetButton.addEventListener("click", resetFormAndResults);
+    themeToggleBtn.addEventListener("click", toggleTheme);
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -1040,7 +1014,6 @@
       const weight = Number(document.getElementById("weight").value);
       const activity = document.getElementById("activity").value;
 
-      // Validation
       if (!gender) {
         showError("Please select your gender.");
         return;
@@ -1066,19 +1039,14 @@
         return;
       }
 
-      // ✅ بعد ما نتأكد إن كل شيء صحيح نحفظ البيانات
-      saveFormState();
-
-      // BMR calculation (Mifflin-St Jeor)
+      // BMR (Mifflin-St Jeor)
       let bmr;
       if (gender.value === "male") {
         bmr = 10 * weight + 6.25 * height - 5 * age + 5;
       } else {
-        // female
         bmr = 10 * weight + 6.25 * height - 5 * age - 161;
       }
 
-      // Activity factor
       let activityFactor = 1.2;
       switch (activity) {
         case "sedentary":
@@ -1100,12 +1068,11 @@
 
       const maintenanceCalories = bmr * activityFactor;
 
-      // Goal adjustment
       let suggestedCalories = maintenanceCalories;
       let description = "";
 
       if (goal.value === "lose") {
-        suggestedCalories = maintenanceCalories * 0.85; // -15%
+        suggestedCalories = maintenanceCalories * 0.85;
         description =
           "To lose weight, a gentle calorie deficit is recommended. These calories may help you lose weight gradually while maintaining energy for daily activities.";
       } else if (goal.value === "maintain") {
@@ -1113,72 +1080,60 @@
         description =
           "To maintain your current weight, try to stay close to this calorie range and keep a consistent activity level.";
       } else if (goal.value === "gain") {
-        suggestedCalories = maintenanceCalories * 1.15; // +15%
+        suggestedCalories = maintenanceCalories * 1.15;
         description =
           "To gain weight, especially muscle mass, a slight calorie surplus combined with strength training can be effective.";
       }
 
-      // Round main values
       const bmrRounded = Math.round(bmr);
       const maintenanceRounded = Math.round(maintenanceCalories);
       const suggestedRounded = Math.round(suggestedCalories);
 
       // Macros
-      // Protein: 1.6–2.2 g/kg
-      const proteinMin = weight * 1.6;
-      const proteinMax = weight * 2.2;
-      const proteinMid = (proteinMin + proteinMax) / 2;
+      const proteinLow = weight * 1.6;
+      const proteinHigh = weight * 2.2;
+      const proteinMid = (proteinLow + proteinHigh) / 2;
 
-      // Fat: 0.8–1.0 g/kg
-      const fatMin = weight * 0.8;
-      const fatMax = weight * 1.0;
-      const fatMid = (fatMin + fatMax) / 2;
+      const fatLow = weight * 0.8;
+      const fatHigh = weight * 1.0;
+      const fatMid = (fatLow + fatHigh) / 2;
 
-      // Calories taken by protein and fat
       const caloriesFromProtein = proteinMid * 4;
       const caloriesFromFat = fatMid * 9;
+      let caloriesForCarbs = suggestedRounded - (caloriesFromProtein + caloriesFromFat);
+      if (caloriesForCarbs < 0) caloriesForCarbs = 0;
+      const carbs = caloriesForCarbs / 4;
 
-      let carbsGrams =
-        (suggestedCalories - (caloriesFromProtein + caloriesFromFat)) / 4;
-      if (carbsGrams < 0) carbsGrams = 0;
+      // Meal split: 30 / 40 / 25 / 5
+      const breakfast = suggestedRounded * 0.3;
+      const lunch = suggestedRounded * 0.4;
+      const dinner = suggestedRounded * 0.25;
+      const snacks = suggestedRounded * 0.05;
 
-      // Display results (main)
+      // Display
       bmrValueEl.textContent = bmrRounded + " kcal";
       maintenanceValueEl.textContent = maintenanceRounded + " kcal";
       goalValueEl.textContent = suggestedRounded + " kcal";
-
-      // Display macros
-      proteinValueEl.textContent =
-        Math.round(proteinMin) + "–" + Math.round(proteinMax) + " g/day";
-      fatValueEl.textContent =
-        Math.round(fatMin) + "–" + Math.round(fatMax) + " g/day";
-      carbValueEl.textContent = "≈ " + Math.round(carbsGrams) + " g/day";
-
-      // Daily plan split (30% / 40% / 25% / 5%)
-      const breakfastCals = suggestedCalories * 0.3;
-      const lunchCals = suggestedCalories * 0.4;
-      const dinnerCals = suggestedCalories * 0.25;
-      const snacksCals = suggestedCalories * 0.05;
-
-      breakfastValueEl.textContent = Math.round(breakfastCals) + " kcal";
-      lunchValueEl.textContent = Math.round(lunchCals) + " kcal";
-      dinnerValueEl.textContent = Math.round(dinnerCals) + " kcal";
-      snacksValueEl.textContent = Math.round(snacksCals) + " kcal";
-
       goalDescriptionEl.textContent = description;
 
-      // Show result card with animation
-      resultBox.classList.add("visible");
+      proteinValueEl.textContent =
+        Math.round(proteinLow) + "–" + Math.round(proteinHigh) + " g/day";
+      fatValueEl.textContent =
+        Math.round(fatLow) + "–" + Math.round(fatHigh) + " g/day";
+      carbValueEl.textContent = "≈ " + Math.round(carbs) + " g/day";
 
-      // Scroll into view for better UX (especially on mobile)
+      breakfastValueEl.textContent = Math.round(breakfast) + " kcal";
+      lunchValueEl.textContent = Math.round(lunch) + " kcal";
+      dinnerValueEl.textContent = Math.round(dinner) + " kcal";
+      snacksValueEl.textContent = Math.round(snacks) + " kcal";
+
+      resultBox.classList.add("visible");
       resultBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
-    // نحمل بيانات النموذج عند فتح الصفحة
+    // تشغيل عند فتح الصفحة
+    loadTheme();
     loadFormState();
   </script>
 </body>
 </html>
-
-
-
