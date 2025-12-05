@@ -194,20 +194,28 @@
       font-weight: 500;
     }
 
-    input[type="number"],
+        input[type="number"],
     select {
+      width: 100%;
       padding: 9px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
       font-size: 0.85rem;
       outline: none;
-      transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease, background 0.2s ease;
+      transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease, background 0.2s ease, color 0.2s ease;
       background: #f9fafb;
+      color: var(--text-main); /* ✅ خلي النص دائمًا بنفس لون النص العام */
     }
 
     body.dark-mode input[type="number"],
     body.dark-mode select {
       background: #020617;
+      color: var(--text-main); /* ✅ نص واضح في الوضع الليلي */
+    }
+
+    input[type="number"]::placeholder {
+      color: #9ca3af;
+      font-size: 0.8rem;
     }
 
     input[type="number"]:focus,
@@ -1121,3 +1129,4 @@
   </script>
 </body>
 </html>
+
