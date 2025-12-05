@@ -708,209 +708,283 @@
   </div>
 
   <script>
-    const form = document.getElementById("calorieForm");
-    const errorMessage = document.getElementById("errorMessage");
-    const resultBox = document.getElementById("resultBox");
-    const bmrValueEl = document.getElementById("bmrValue");
-    const maintenanceValueEl = document.getElementById("maintenanceValue");
-    const goalValueEl = document.getElementById("goalValue");
-    const goalDescriptionEl = document.getElementById("goalDescription");
-    const proteinValueEl = document.getElementById("proteinValue");
-    const fatValueEl = document.getElementById("fatValue");
-    const carbValueEl = document.getElementById("carbValue");
-    const breakfastValueEl = document.getElementById("breakfastValue");
-    const lunchValueEl = document.getElementById("lunchValue");
-    const dinnerValueEl = document.getElementById("dinnerValue");
-    const snacksValueEl = document.getElementById("snacksValue");
+  const form = document.getElementById("calorieForm");
+  const errorMessage = document.getElementById("errorMessage");
+  const resultBox = document.getElementById("resultBox");
+  const bmrValueEl = document.getElementById("bmrValue");
+  const maintenanceValueEl = document.getElementById("maintenanceValue");
+  const goalValueEl = document.getElementById("goalValue");
+  const goalDescriptionEl = document.getElementById("goalDescription");
+  const proteinValueEl = document.getElementById("proteinValue");
+  const fatValueEl = document.getElementById("fatValue");
+  const carbValueEl = document.getElementById("carbValue");
+  const breakfastValueEl = document.getElementById("breakfastValue");
+  const lunchValueEl = document.getElementById("lunchValue");
+  const dinnerValueEl = document.getElementById("dinnerValue");
+  const snacksValueEl = document.getElementById("snacksValue");
 
-    const themeToggleBtn = document.getElementById("themeToggle");
-    const themeIcon = themeToggleBtn.querySelector(".theme-icon");
-    const themeLabel = themeToggleBtn.querySelector(".theme-label");
+  const themeToggleBtn = document.getElementById("themeToggle");
+  const themeIcon = themeToggleBtn.querySelector(".theme-icon");
+  const themeLabel = themeToggleBtn.querySelector(".theme-label");
 
-    function clearError() {
-      errorMessage.style.display = "none";
-      errorMessage.textContent = "";
+  const STORAGE_KEY_THEME = "cf-theme";
+  const STORAGE_KEY_FORM = "cf-last-inputs";
+
+  function clearError() {
+    errorMessage.style.display = "none";
+    errorMessage.textContent = "";
+  }
+
+  function showError(msg) {
+    errorMessage.textContent = msg;
+    errorMessage.style.display = "block";
+  }
+
+  // تحديث نص زر الثيم
+  function updateThemeButton(mode) {
+    if (mode === "dark") {
+      themeIcon.textContent = "☀️";
+      themeLabel.textContent = "Light mode";
+    } else {
+      themeIcon.textContent = "🌙";
+      themeLabel.textContent = "Dark mode";
     }
+  }
 
-    function showError(msg) {
-      errorMessage.textContent = msg;
-      errorMessage.style.display = "block";
-    }
-
-    // تحديث نص زر الثيم
-    function updateThemeButton(mode) {
-      if (mode === "dark") {
-        themeIcon.textContent = "☀️";
-        themeLabel.textContent = "Light mode";
-      } else {
-        themeIcon.textContent = "🌙";
-        themeLabel.textContent = "Dark mode";
-      }
-    }
-
-    // تحميل الثيم المحفوظ من المتصفح
-    const savedTheme = localStorage.getItem("cf-theme");
+  // تحميل الثيم المحفوظ من المتصفح
+  (function initTheme() {
+    const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
     if (savedTheme === "dark") {
       document.body.classList.add("dark-mode");
       updateThemeButton("dark");
     } else {
       updateThemeButton("light");
     }
+  })();
 
-    // تبديل الثيم عند الضغط على الزر
-    themeToggleBtn.addEventListener("click", () => {
-      const isDark = document.body.classList.toggle("dark-mode");
-      const mode = isDark ? "dark" : "light";
-      localStorage.setItem("cf-theme", mode);
-      updateThemeButton(mode);
-    });
+  // تبديل الثيم عند الضغط على الزر
+  themeToggleBtn.addEventListener("click", () => {
+    const isDark = document.body.classList.toggle("dark-mode");
+    const mode = isDark ? "dark" : "light";
+    localStorage.setItem(STORAGE_KEY_THEME, mode);
+    updateThemeButton(mode);
+  });
 
-    // Clear errors when user changes inputs
-    form.querySelectorAll("input, select").forEach((el) => {
-      el.addEventListener("input", clearError);
-      el.addEventListener("change", clearError);
-    });
+  // حفظ بيانات النموذج في المتصفح
+  function saveFormState() {
+    const gender = form.querySelector('input[name="gender"]:checked');
+    const goal = form.querySelector('input[name="goal"]:checked');
+    const data = {
+      gender: gender ? gender.value : "",
+      goal: goal ? goal.value : "",
+      age: document.getElementById("age").value || "",
+      height: document.getElementById("height").value || "",
+      weight: document.getElementById("weight").value || "",
+      activity: document.getElementById("activity").value || ""
+    };
+    localStorage.setItem(STORAGE_KEY_FORM, JSON.stringify(data));
+  }
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
-      clearError();
+  // تحميل بيانات النموذج من المتصفح
+  function loadFormState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_FORM);
+      if (!raw) return;
+      const data = JSON.parse(raw);
 
-      const gender = form.querySelector('input[name="gender"]:checked');
-      const goal = form.querySelector('input[name="goal"]:checked');
-      const age = Number(document.getElementById("age").value);
-      const height = Number(document.getElementById("height").value);
-      const weight = Number(document.getElementById("weight").value);
-      const activity = document.getElementById("activity").value;
+      if (data.age) document.getElementById("age").value = data.age;
+      if (data.height) document.getElementById("height").value = data.height;
+      if (data.weight) document.getElementById("weight").value = data.weight;
+      if (data.activity) document.getElementById("activity").value = data.activity;
 
-      // Validation
-      if (!gender) {
-        showError("Please select your gender.");
-        return;
-      }
-      if (!age || age < 10 || age > 100) {
-        showError("Please enter a valid age between 10 and 100.");
-        return;
-      }
-      if (!height || height < 100 || height > 250) {
-        showError("Please enter a valid height between 100 and 250 cm.");
-        return;
-      }
-      if (!weight || weight < 30 || weight > 250) {
-        showError("Please enter a valid weight between 30 and 250 kg.");
-        return;
-      }
-      if (!activity) {
-        showError("Please select your activity level.");
-        return;
-      }
-      if (!goal) {
-        showError("Please select your goal.");
-        return;
+      if (data.gender) {
+        const gEl = form.querySelector(
+          `input[name="gender"][value="${data.gender}"]`
+        );
+        if (gEl) gEl.checked = true;
       }
 
-      // BMR calculation (Mifflin-St Jeor)
-      let bmr;
-      if (gender.value === "male") {
-        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-      } else {
-        // female
-        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      if (data.goal) {
+        const goalEl = form.querySelector(
+          `input[name="goal"][value="${data.goal}"]`
+        );
+        if (goalEl) goalEl.checked = true;
       }
 
-      // Activity factor
-      let activityFactor = 1.2;
-      switch (activity) {
-        case "sedentary":
-          activityFactor = 1.2;
-          break;
-        case "light":
-          activityFactor = 1.375;
-          break;
-        case "moderate":
-          activityFactor = 1.55;
-          break;
-        case "very":
-          activityFactor = 1.725;
-          break;
-        case "super":
-          activityFactor = 1.9;
-          break;
+      // لو كل البيانات موجودة تقريبا نحسب النتائج تلقائيا
+      if (
+        data.gender &&
+        data.goal &&
+        data.age &&
+        data.height &&
+        data.weight &&
+        data.activity
+      ) {
+        // نستخدم setTimeout عشان نضمن إن كل شيء جاهز
+        setTimeout(() => {
+          form.dispatchEvent(new Event("submit", { cancelable: true }));
+        }, 0);
       }
+    } catch (e) {
+      console.warn("Could not load saved form state", e);
+    }
+  }
 
-      const maintenanceCalories = bmr * activityFactor;
+  // Clear errors when user changes inputs
+  form.querySelectorAll("input, select").forEach((el) => {
+    el.addEventListener("input", clearError);
+    el.addEventListener("change", clearError);
+  });
 
-      // Goal adjustment
-      let suggestedCalories = maintenanceCalories;
-      let description = "";
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    clearError();
 
-      if (goal.value === "lose") {
-        suggestedCalories = maintenanceCalories * 0.85; // -15%
-        description =
-          "To lose weight, a gentle calorie deficit is recommended. These calories may help you lose weight gradually while maintaining energy for daily activities.";
-      } else if (goal.value === "maintain") {
-        suggestedCalories = maintenanceCalories;
-        description =
-          "To maintain your current weight, try to stay close to this calorie range and keep a consistent activity level.";
-      } else if (goal.value === "gain") {
-        suggestedCalories = maintenanceCalories * 1.15; // +15%
-        description =
-          "To gain weight, especially muscle mass, a slight calorie surplus combined with strength training can be effective.";
-      }
+    const gender = form.querySelector('input[name="gender"]:checked');
+    const goal = form.querySelector('input[name="goal"]:checked');
+    const age = Number(document.getElementById("age").value);
+    const height = Number(document.getElementById("height").value);
+    const weight = Number(document.getElementById("weight").value);
+    const activity = document.getElementById("activity").value;
 
-      // Round main values
-      const bmrRounded = Math.round(bmr);
-      const maintenanceRounded = Math.round(maintenanceCalories);
-      const suggestedRounded = Math.round(suggestedCalories);
+    // Validation
+    if (!gender) {
+      showError("Please select your gender.");
+      return;
+    }
+    if (!age || age < 10 || age > 100) {
+      showError("Please enter a valid age between 10 and 100.");
+      return;
+    }
+    if (!height || height < 100 || height > 250) {
+      showError("Please enter a valid height between 100 and 250 cm.");
+      return;
+    }
+    if (!weight || weight < 30 || weight > 250) {
+      showError("Please enter a valid weight between 30 and 250 kg.");
+      return;
+    }
+    if (!activity) {
+      showError("Please select your activity level.");
+      return;
+    }
+    if (!goal) {
+      showError("Please select your goal.");
+      return;
+    }
 
-      // Macros
-      // Protein: 1.6–2.2 g/kg
-      const proteinMin = weight * 1.6;
-      const proteinMax = weight * 2.2;
-      const proteinMid = (proteinMin + proteinMax) / 2;
+    // ✅ بعد ما نتأكد إن كل شيء صحيح نحفظ البيانات
+    saveFormState();
 
-      // Fat: 0.8–1.0 g/kg
-      const fatMin = weight * 0.8;
-      const fatMax = weight * 1.0;
-      const fatMid = (fatMin + fatMax) / 2;
+    // BMR calculation (Mifflin-St Jeor)
+    let bmr;
+    if (gender.value === "male") {
+      bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+      // female
+      bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
 
-      // Calories taken by protein and fat
-      const caloriesFromProtein = proteinMid * 4;
-      const caloriesFromFat = fatMid * 9;
+    // Activity factor
+    let activityFactor = 1.2;
+    switch (activity) {
+      case "sedentary":
+        activityFactor = 1.2;
+        break;
+      case "light":
+        activityFactor = 1.375;
+        break;
+      case "moderate":
+        activityFactor = 1.55;
+        break;
+      case "very":
+        activityFactor = 1.725;
+        break;
+      case "super":
+        activityFactor = 1.9;
+        break;
+    }
 
-      let carbsGrams = (suggestedCalories - (caloriesFromProtein + caloriesFromFat)) / 4;
-      if (carbsGrams < 0) carbsGrams = 0;
+    const maintenanceCalories = bmr * activityFactor;
 
-      // Display results (main)
-      bmrValueEl.textContent = bmrRounded + " kcal";
-      maintenanceValueEl.textContent = maintenanceRounded + " kcal";
-      goalValueEl.textContent = suggestedRounded + " kcal";
+    // Goal adjustment
+    let suggestedCalories = maintenanceCalories;
+    let description = "";
 
-      // Display macros
-      proteinValueEl.textContent =
-        Math.round(proteinMin) + "–" + Math.round(proteinMax) + " g/day";
-      fatValueEl.textContent =
-        Math.round(fatMin) + "–" + Math.round(fatMax) + " g/day";
-      carbValueEl.textContent = "≈ " + Math.round(carbsGrams) + " g/day";
+    if (goal.value === "lose") {
+      suggestedCalories = maintenanceCalories * 0.85; // -15%
+      description =
+        "To lose weight, a gentle calorie deficit is recommended. These calories may help you lose weight gradually while maintaining energy for daily activities.";
+    } else if (goal.value === "maintain") {
+      suggestedCalories = maintenanceCalories;
+      description =
+        "To maintain your current weight, try to stay close to this calorie range and keep a consistent activity level.";
+    } else if (goal.value === "gain") {
+      suggestedCalories = maintenanceCalories * 1.15; // +15%
+      description =
+        "To gain weight, especially muscle mass, a slight calorie surplus combined with strength training can be effective.";
+    }
 
-      // Daily plan split (30% / 40% / 25% / 5%)
-      const breakfastCals = suggestedCalories * 0.30;
-      const lunchCals = suggestedCalories * 0.40;
-      const dinnerCals = suggestedCalories * 0.25;
-      const snacksCals = suggestedCalories * 0.05;
+    // Round main values
+    const bmrRounded = Math.round(bmr);
+    const maintenanceRounded = Math.round(maintenanceCalories);
+    const suggestedRounded = Math.round(suggestedCalories);
 
-      breakfastValueEl.textContent = Math.round(breakfastCals) + " kcal";
-      lunchValueEl.textContent = Math.round(lunchCals) + " kcal";
-      dinnerValueEl.textContent = Math.round(dinnerCals) + " kcal";
-      snacksValueEl.textContent = Math.round(snacksCals) + " kcal";
+    // Macros
+    // Protein: 1.6–2.2 g/kg
+    const proteinMin = weight * 1.6;
+    const proteinMax = weight * 2.2;
+    const proteinMid = (proteinMin + proteinMax) / 2;
 
-      goalDescriptionEl.textContent = description;
+    // Fat: 0.8–1.0 g/kg
+    const fatMin = weight * 0.8;
+    const fatMax = weight * 1.0;
+    const fatMid = (fatMin + fatMax) / 2;
 
-      // Show result card with animation
-      resultBox.classList.add("visible");
+    // Calories taken by protein and fat
+    const caloriesFromProtein = proteinMid * 4;
+    const caloriesFromFat = fatMid * 9;
 
-      // Scroll into view for better UX (especially on mobile)
-      resultBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
-  </script>
+    let carbsGrams =
+      (suggestedCalories - (caloriesFromProtein + caloriesFromFat)) / 4;
+    if (carbsGrams < 0) carbsGrams = 0;
+
+    // Display results (main)
+    bmrValueEl.textContent = bmrRounded + " kcal";
+    maintenanceValueEl.textContent = maintenanceRounded + " kcal";
+    goalValueEl.textContent = suggestedRounded + " kcal";
+
+    // Display macros
+    proteinValueEl.textContent =
+      Math.round(proteinMin) + "–" + Math.round(proteinMax) + " g/day";
+    fatValueEl.textContent =
+      Math.round(fatMin) + "–" + Math.round(fatMax) + " g/day";
+    carbValueEl.textContent = "≈ " + Math.round(carbsGrams) + " g/day";
+
+    // Daily plan split (30% / 40% / 25% / 5%)
+    const breakfastCals = suggestedCalories * 0.3;
+    const lunchCals = suggestedCalories * 0.4;
+    const dinnerCals = suggestedCalories * 0.25;
+    const snacksCals = suggestedCalories * 0.05;
+
+    breakfastValueEl.textContent = Math.round(breakfastCals) + " kcal";
+    lunchValueEl.textContent = Math.round(lunchCals) + " kcal";
+    dinnerValueEl.textContent = Math.round(dinnerCals) + " kcal";
+    snacksValueEl.textContent = Math.round(snacksCals) + " kcal";
+
+    goalDescriptionEl.textContent = description;
+
+    // Show result card with animation
+    resultBox.classList.add("visible");
+
+    // Scroll into view for better UX (especially on mobile)
+    resultBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  // نحمل بيانات النموذج عند فتح الصفحة
+  loadFormState();
+</script>
+
 </body>
 </html>
+
